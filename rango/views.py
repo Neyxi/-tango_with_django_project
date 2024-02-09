@@ -26,6 +26,9 @@ def some_view(request):
         return HttpResponse('You are not logged in.')
 
 def user_login(request):
+    
+    request.session.set_test_cookie()
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -34,6 +37,10 @@ def user_login(request):
         
         if user:
             if user.is_active:
+                if request.session.test_cookie_worked():
+                    print('TEST COOKIE WORKED!')
+                    request.session.delete_test_cookie()
+                    
                 login(request, user)
                 return redirect(reverse('rango:index'))
             else:
