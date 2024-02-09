@@ -54,6 +54,9 @@ Rango
     <a href="{% url 'rango:add_category' %}">Add a New Category</a><br />
     <img src="{% static 'images/rango.jpg' %}" alt="Picture of Rango" />
 </div>
+
+<div>
       <a href="{% url 'rango:login' %}">Login</a>
+      <p>Visits: {{ visits }}</p>     
 </div>
 {% endblock %}

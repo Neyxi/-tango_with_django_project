@@ -7,20 +7,24 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 
+def get_server_side_cookie(request, cookie, default_val=None):
+    val = request.session.get(cookie, default_val)
+    return val
+
 def visitor_cookie_handler(request, response):
     
-    visits = int(request.COOKIES.get('visits', '1'))
+    visits = int(get_server_side_cookie(request, 'visits', '1'))
     
-    last_visit_cookie = request.COOKIES.get('last_visit', str(datetime.now()))
+    last_visit_cookie = get_server_side_cookie(request, 'last_visit', str(datetime.now()))
     last_visit_time = datetime.strptime(last_visit_cookie[:-7], '%Y-%m-%d %H:%M:%S')
     
     if (datetime.now() - last_visit_time).days > 0:
         visits = visits + 1
-        response.set_cookie('last_visit', str(datetime.now()))
+        request.session['last_visit'] = str(datetime.now())
     else:
-        response.set_cookie('last_visit', last_visit_cookie)
+        resquest.session['last_visit'] = last_visit_cookie
         
-    response.set_cookie('visits', visits)
+    resquest.session['visits'] = visits
 
 
 def restricted(request):
@@ -37,7 +41,13 @@ def restricted(request):
 
 def some_view(request):
     if request.user.is_authenticated:
-        return HttpResponse('You are logged in.')
+        
+        visits = request.session.get('visits', 0)
+        
+        visit += 1
+        request.session['visits'] = visits
+        
+        return HttpResponse(f'You are logged in.Numer of visits: {visits}')
     else:
         return HttpResponse('You are not logged in.')
 
@@ -142,12 +152,17 @@ def index(request):
     context_dict['categories'] = category_list
     context_dict['pages'] = page_list
     
-    response = render(request, 'rango/index.html', context=context_dict)
     visitor_cookie_handler(request, response)
-    return response
+    
+    context_dict['visits'] = request.session['visits']
+    
+    return render(request, 'rango/index.html', context=context_dict)
     
 
 def about(request):
+    
+    visitor_cookie_handler(request)
+    visits = request.session['visits']
     
     context_dict = {'author':'Boyang An'}
     print(request.method)
