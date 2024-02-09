@@ -3,7 +3,27 @@ from django.urls import reverse
 from rango.models import Page, Category
 from django.http import HttpResponse, HttpResponseRedirect
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+
+
+def restricted(request):
+    return render(request, 'rango/restricted.html', {})
+
+
+def user_logout(request):
+    logout(request)
+    return redirect(reverse('rango:index'))
+
+
+def restricted(request):
+    return HttpResponse('Since you are logged in, you can see this text!')
+
+def some_view(request):
+    if request.user.is_authenticated:
+        return HttpResponse('You are logged in.')
+    else:
+        return HttpResponse('You are not logged in.')
 
 def user_login(request):
     if request.method == 'POST':

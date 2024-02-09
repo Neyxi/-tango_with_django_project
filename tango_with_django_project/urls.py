@@ -28,4 +28,6 @@ urlpatterns = [
     # The above maps any URLs starting with rango/ to be handled by rango.
     path('admin/', admin.site.urls),
     path('newDjangoApp/', include('newDjangoApp.urls')),
+    path('restricted/', views.restricted, name='restricted'),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
