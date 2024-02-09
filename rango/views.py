@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from rango.models import Page, Category
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -152,9 +152,9 @@ def index(request):
     context_dict['categories'] = category_list
     context_dict['pages'] = page_list
     
-    visitor_cookie_handler(request, response)
+    visitor_cookie_handler(request)
     
-    context_dict['visits'] = request.session['visits']
+    context_dict['visits'] = request.session.get['visits', 1]
     
     return render(request, 'rango/index.html', context=context_dict)
     
@@ -162,15 +162,11 @@ def index(request):
 def about(request):
     
     visitor_cookie_handler(request)
-    visits = request.session['visits']
+    visits = request.session.get['visits', 1]
     
-    context_dict = {'author':'Boyang An'}
-    print(request.method)
-    print(request.user)
+    context_dict = {'visits':visits, 'author':'Boyang An'}
     return render(request, 'rango/about.html', context=context_dict)
 
-def about(request):
-    return HttpResponse('Rango says: Here is the about page. <a href="/rango/">Index</a>')
 
 def add_category(request):
     form = CategoryForm()
