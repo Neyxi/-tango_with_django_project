@@ -1,10 +1,8 @@
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from rango.models import Page
+from rango.models import Page, Category
 from django.http import HttpResponse
-from rango.models import Category
-from rango.forms import CategoryForm
-from rango.forms import PageForm
+from rango.forms import CategoryForm, PageForm
 
 def show_category(request, category_name_slug):
     # Create a context dictionary which we can pass to the template rendering engine.
@@ -58,7 +56,12 @@ def index(request):
 def about(request):
     
     context_dict = {'author':'Boyang An'}
+    print(request.method)
+    print(request.user)
     return render(request, 'rango/about.html', context=context_dict)
+
+def about(request):
+    return HttpResponse('Rango says: Here is the about page. <a href="/rango/">Index</a>')
 
 def add_category(request):
     form = CategoryForm()
