@@ -12,7 +12,8 @@ class MyNewModel(models.Model):
         return self.name
 
 class Category(models.Model):
-    name = models.CharField(max_length=128, unique=True)
+    NAME_MAX_LENGTH = 128
+    name = models.CharField(max_length=NAME_MAX_LENGTH, unique=True)
     views = models.IntegerField(default=0)
     likes = models.IntegerField(default=0)
     slug = models.SlugField(unique=True, blank=True)
