@@ -11,7 +11,7 @@ def get_server_side_cookie(request, cookie, default_val=None):
     val = request.session.get(cookie, default_val)
     return val
 
-def visitor_cookie_handler(request, response):
+def visitor_cookie_handler(request):
     
     visits = int(get_server_side_cookie(request, 'visits', '1'))
     
@@ -22,9 +22,9 @@ def visitor_cookie_handler(request, response):
         visits = visits + 1
         request.session['last_visit'] = str(datetime.now())
     else:
-        resquest.session['last_visit'] = last_visit_cookie
+        request.session['last_visit'] = last_visit_cookie
         
-    resquest.session['visits'] = visits
+    request.session['visits'] = visits
 
 
 def restricted(request):
@@ -154,7 +154,7 @@ def index(request):
     
     visitor_cookie_handler(request)
     
-    context_dict['visits'] = request.session.get['visits', 1]
+    context_dict['visits'] = request.session.get('visits', 1)
     
     return render(request, 'rango/index.html', context=context_dict)
     
