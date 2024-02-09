@@ -5,4 +5,5 @@ app_name = 'newDjangoApp'
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('restricted/', views.restricted, name='restricted'),
 ]
