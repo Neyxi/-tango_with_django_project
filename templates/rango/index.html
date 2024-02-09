@@ -19,7 +19,9 @@
         {% if categories %}
             <ul>
             {% for category in categories %}
-                <li>{{ category.name }}</li>
+            <li>
+                <a href="/rango/category/{{ category.slug }}/">{{ category.name }}</a>
+            </li>
             {% endfor %}
             </ul>
         {% else %}
@@ -32,7 +34,7 @@
             <img src="{% static 'images/rango.jpg' %}" alt="Picture of Rango" />
         </div>
     </body>
-    
+
 </html>
 
 
