@@ -5,6 +5,22 @@ from django.http import HttpResponse, HttpResponseRedirect
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from datetime import datetime
+
+def visitor_cookie_handler(request, response):
+    
+    visits = int(request.COOKIES.get('visits', '1'))
+    
+    last_visit_cookie = request.COOKIES.get('last_visit', str(datetime.now()))
+    last_visit_time = datetime.strptime(last_visit_cookie[:-7], '%Y-%m-%d %H:%M:%S')
+    
+    if (datetime.now() - last_visit_time).days > 0:
+        visits = visits + 1
+        response.set_cookie('last_visit', str(datetime.now()))
+    else:
+        response.set_cookie('last_visit', last_visit_cookie)
+        
+    response.set_cookie('visits', visits)
 
 
 def restricted(request):
@@ -39,6 +55,7 @@ def user_login(request):
             if user.is_active:
                 if request.session.test_cookie_worked():
                     print('TEST COOKIE WORKED!')
+                    
                     request.session.delete_test_cookie()
                     
                 login(request, user)
@@ -125,8 +142,10 @@ def index(request):
     context_dict['categories'] = category_list
     context_dict['pages'] = page_list
     
-    # Render the response and send it back!
-    return render(request, 'rango/index.html', context=context_dict)
+    response = render(request, 'rango/index.html', context=context_dict)
+    visitor_cookie_handler(request, response)
+    return response
+    
 
 def about(request):
     
